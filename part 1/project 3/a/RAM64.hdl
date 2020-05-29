@@ -1,0 +1,35 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/03/a/RAM64.hdl
+
+/**
+ * Memory of 64 registers, each 16 bit-wide. Out holds the value
+ * stored at the memory location specified by address. If load==1, then 
+ * the in value is loaded into the memory location specified by address 
+ * (the loaded value will be emitted to out from the next time step onward).
+ */
+
+CHIP RAM64 {
+    IN in[16], load, address[6];
+    OUT out[16];
+
+    PARTS:
+    // Put your code here:
+//MSB 3 bits of Address are once used here from selecting the RAM8 and second time for probing the output from one of the 
+//8 RAM8's using MUX(see bottom) 
+DMux8Way(in=load ,sel=address[3..5] ,a=Rm81 ,b=Rm82 ,c=Rm83 ,d=Rm84 ,e=Rm85 ,f=Rm86 ,g=Rm87 ,h=Rm88 );
+//You can build ground-up from Register. But it includes elaboration of RAM8. So why not use already available RAM8.
+
+//At this level the LSB 3bits of address are used twice inside RAM8 once for selecting Register load and once for probing //the output from one of 8 registers using MUX.
+RAM8(in=in ,load=Rm81 ,address=address[0..2] ,out=Orm81 );
+RAM8(in=in ,load=Rm82 ,address=address[0..2] ,out=Orm82 );
+RAM8(in=in ,load=Rm83 ,address=address[0..2] ,out=Orm83 );
+RAM8(in=in ,load=Rm84 ,address=address[0..2] ,out=Orm84 ); 
+RAM8(in=in ,load=Rm85 ,address=address[0..2] ,out=Orm85 );
+RAM8(in=in ,load=Rm86 ,address=address[0..2] ,out=Orm86 );
+RAM8(in=in ,load=Rm87 ,address=address[0..2] ,out=Orm87 );
+RAM8(in=in ,load=Rm88 ,address=address[0..2] ,out=Orm88 );
+
+Mux8Way16(a= Orm81,b=Orm82 ,c=Orm83 ,d=Orm84 ,e=Orm85 ,f=Orm86 ,g=Orm87 ,h=Orm88 ,sel=address[3..5] ,out=out );
+}
