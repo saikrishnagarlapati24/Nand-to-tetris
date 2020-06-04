@@ -15,7 +15,6 @@ class parser
 			n=curcom.length();
 			if(curcom.compare(0,4,"push")==0)
 			{
-				//arg1="push";                           /////// not necessary to assign arg1 here
 				arg1.assign(curcom,0,4);
 				cmdtype="C_PUSH";
 				if(curcom.compare(4,5,"local")==0)
@@ -104,52 +103,7 @@ class parser
 			{
 				cmdtype="C_ARITHMETIC";
 				arg1.assign(curcom);
-			}
-		/*	else if(curcom.compare("add")==0)                      ////////
-			{
-				cmdtype="C_ARITHMETIC";
-				arg1.assign(curcom);
-			}
-			else if(curcom.compare("sub")==0)                      ///////
-			{
-				cmdtype="C_ARITHMETIC";
-				arg1.assign(curcom);
-			}
-			else if(curcom.compare("neg")==0)
-			{
-				cmdtype="C_ARITHMETIC";
-				arg1.assign(curcom);
-			}
-			else if(curcom.compare("eq")==0)
-			{
-				cmdtype="C_ARITHMETIC";
-				arg1.assign(curcom);
-			}
-			else if(curcom.compare("gt")==0)
-			{
-				cmdtype="C_ARITHMETIC";
-				arg1.assign(curcom);
-			}
-			else if(curcom.compare("lt")==0)
-			{
-				cmdtype="C_ARITHMETIC";
-				arg1.assign(curcom);
-			}
-			else if(curcom.compare("and")==0)
-			{
-				cmdtype="C_ARITHMETIC";
-				arg1.assign(curcom);
-			}
-			else if(curcom.compare("or")==0)
-			{
-				cmdtype="C_ARITHMETIC";
-				arg1.assign(curcom);
-			}
-			else if(curcom.compare("not")==0)
-			{
-				cmdtype="C_ARITHMETIC";
-				arg1.assign(curcom);
-			}	*/																	
+			}																
 		}
 };
 
@@ -163,17 +117,16 @@ class codewriter
 		int l;
 		string outputfile;
 	public :
-		codewriter(string outputfil)                    ////////////////or (string outputfil)
+		codewriter(string outputfil)
 		{
-			//outputfile=outputfil;
 			eqlabctr=1;
 			gtlabctr=1;
 			ltlabctr=1;
-			asmb.open(outputfil.c_str());                       //////// fstream objects accept only c strings as arguments.
+			asmb.open(outputfil.c_str());
 			l=-1;
 			for(int i=0;i<outputfil.length();i++)
 			{
-				if(outputfil.at(i)=='\\' ||  outputfil.at(i)=='/')  //This works for both "Nand2tet\proj" and "Nand2tet\\proj" in command prompt in windows.
+				if(outputfil.at(i)=='\\' ||  outputfil.at(i)=='/')
 				{
 					l=i;
 				}
@@ -206,12 +159,10 @@ class codewriter
 			}
 			else if((pr.arg2).compare("static")==0)
 			{
-				//cout<<outputfile<<"hi\n";
-				asmb<<"@"<<outputfile<<pr.arg3<<" \nD=M \n@SP \nAM=M+1 \nA=A-1 \nM=D \n";             /////////
+				asmb<<"@"<<outputfile<<pr.arg3<<" \nD=M \n@SP \nAM=M+1 \nA=A-1 \nM=D \n";
 			}
 			else if((pr.arg2).compare("temp")==0)
 			{
-				//asmb<<"@5 \nD=A \n@"<<pr.arg3<<" \nA=D+A \nD=M \n@SP \nAM=M+1 \nA=A-1 \nM=D \n";
 				asmb<<"@"<<5+atoi((pr.arg3).c_str())<<" \nD=M \n@SP \nAM=M+1 \nA=A-1 \nM=D \n";
 			}
 			else if((pr.arg2).compare("pointer")==0)
@@ -247,12 +198,10 @@ class codewriter
 			}
 			else if((pr.arg2).compare("static")==0)
 			{
-				//cout<<"@SP \nAM=M-1 \nD=M \n@"<<outputfile<<pr.arg3<<" \nM=D \n";
 				asmb<<"@SP \nAM=M-1 \nD=M \n@"<<outputfile<<pr.arg3<<" \nM=D \n";
 			}
 			else if((pr.arg2).compare("temp")==0)
 			{
-				//asmb<<"@5 \nD=A \n@"<<pr.arg3<<" \nD=A+D \n@R13 \nM=D \n@SP \nAM=M-1 \nD=M \n@R13 \nA=M \nM=D \n";
 				asmb<<"@SP \nAM=M-1 \nD=M \n@"<<5+atoi((pr.arg3).c_str())<<" \nM=D \n";
 			}
 			else if((pr.arg2).compare("pointer")==0)
