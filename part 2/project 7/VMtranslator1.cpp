@@ -262,6 +262,10 @@ class codewriter
 				asmb<<"@SP \nA=M-1 \nM=!M \n";
 			}							
 		}
+		void close()
+		{
+			asmb.close();
+		}
 };
 int main(int argc, char **argv) 
 {
@@ -299,6 +303,7 @@ int main(int argc, char **argv)
 			}
 		}
 	}
+	cw.close();
 	vm.close();
 	return 0;                       
 }
