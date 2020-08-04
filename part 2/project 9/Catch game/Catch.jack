@@ -1,0 +1,136 @@
+class Catch {
+    field Shapes s;
+    field int s1start, s2start, s3start, ballstart;
+
+    constructor Catch new(int a, int b, int c, int d){
+        let s1start=a;
+        let s2start=b;
+        let s3start=c;
+        let ballstart=d;
+        return this;
+    }
+
+    method void dispose(){
+		do Memory.deAlloc(this);
+		return;
+	}
+
+    method void run(){
+        var char key;
+        var int wait_time;
+        let wait_time=25;
+        do Sys.wait(wait_time);
+
+        let s=Shapes.new(s1start, s2start, s3start, ballstart);
+        while( s.gets1touched()=false ){
+            let key=Keyboard.keyPressed();
+            if(~(key=0)){
+                if(key=130){
+                    do s.moves1left();
+                }
+                else{
+                    if(key=132){
+                        do s.moves1right();
+                    }
+                }
+            }
+            do s.moves1down();
+            do Sys.wait(wait_time);
+        }
+
+        if(s.gets1touched()=true){
+            do s.draws2();
+            while(s.gets2touched()=false){
+                let key=Keyboard.keyPressed();
+                if(~(key=0)){
+                    if(key=130){
+                        do s.moves2left();
+                    }
+                    else{
+                        if(key=132){
+                            do s.moves2right();
+                        }
+                    }
+                }
+                do s.moves2down();
+                do Sys.wait(wait_time);
+            }
+            if(s.gets2fit()=false){
+                do Screen.clearScreen();
+                do Output.moveCursor(11, 28);
+                do Output.printString("Game over dear");
+                do Sys.wait(1000);
+                return;
+            }
+
+            else{
+                do s.draws3();
+                while(s.gets3touched()=false){
+                    let key=Keyboard.keyPressed();
+                    if(~(key=0)){
+                        if(key=130){
+                            do s.moves3left();
+                        }
+                        else{
+                            if(key=132){
+                                do s.moves3right();
+                            }
+                        }
+                    }
+                    do s.moves3down();
+                    do Sys.wait(wait_time);
+                }
+                if(s.gets3fit()=false){
+                    do Screen.clearScreen();
+                    do Output.moveCursor(11, 28);
+                    do Screen.setColor(true);
+                    do Output.printString("Game over lad");
+                    do Sys.wait(1000);
+                    return;
+                }
+
+                else{
+                    do s.drawball();
+                    while(s.getballtouched()=false){
+                        let key=Keyboard.keyPressed();
+                        if(~(key=0)){
+                            if(key=130){
+                                do s.moveballleft();
+                            }
+                            else{
+                                if(key=132){
+                                    do s.moveballright();
+                                }
+                            }
+                        }
+                        do s.moveballdown();
+                        do Sys.wait(wait_time);
+                    }
+                    if(s.getballtouched()=true){
+                        if(s.getballcaught()=true){
+                            do Screen.clearScreen();
+                            do Output.moveCursor(11,28);
+                            do Screen.setColor(true);
+                            do Output.printString("Caught it :-)");
+                            do Output.moveCursor(12,28);
+                            do Output.printString("Game over man");
+                            do Sys.wait(1000);
+                            return;
+                        }
+                        else{
+                            do Screen.clearScreen();
+                            do Screen.setColor(true);
+                            do Output.moveCursor(11,28);
+                            do Output.printString("Dropped it :-(");
+                            do Output.moveCursor(12,28);
+                            do Output.printString("Game over man");
+                            do Sys.wait(1000);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+        return;
+    }
+}
