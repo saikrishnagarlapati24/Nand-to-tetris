@@ -1,0 +1,16 @@
+class Main {
+    function void main(){
+        var Catch game;
+        let game=Catch.new(200, 50, 155, 200);
+        do Screen.clearScreen();
+        do Output.moveCursor(11,28);
+        do Screen.setColor(true);
+        do Output.printString("Game starts");
+        do Sys.wait(1000);
+        do Screen.clearScreen();
+        do game.run();
+        do Screen.clearScreen();
+        do game.dispose();
+        return;
+    }
+}
