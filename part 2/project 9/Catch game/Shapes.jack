@@ -1,0 +1,460 @@
+class Shapes {
+	field int s1x, s1y, s2x, s2y, s3x, s3y, bx, by, lateral_move, down_move, radius;
+	field boolean	s1touched, s2touched, s3touched, balltouched, s2fit, s3fit, ballcaught;
+
+	//constructors
+
+	constructor Shapes new(int x, int y, int z, int w){
+		let s1x=x;
+		let s1y=0;
+		let s2x=y;
+		let s2y=0;
+		let s3x=z;
+		let s3y=30;
+		let bx=w;
+		let by=5;
+		let s1touched=false;
+		let s2touched=false;
+		let s3touched=false;
+		let balltouched=false;
+		let s2fit=false;
+		let s3fit=false;
+		let ballcaught=false;
+		let lateral_move=4;
+		let down_move=2;
+		let radius=4;
+		do draws1();
+		return this;
+	}
+
+	//destructors
+
+	method void dispose(){
+		do Memory.deAlloc(this);
+		return;
+	}
+
+	//accessors
+
+	method boolean gets1touched(){
+		return s1touched;
+	}
+
+	method boolean gets2touched(){
+		return s2touched;
+	}
+
+	method boolean gets3touched(){
+		return s3touched;
+	}
+
+	method boolean getballtouched(){
+		return balltouched;
+	}
+
+	method boolean gets2fit(){
+		return s2fit;
+	}
+
+	method boolean gets3fit(){
+		return s3fit;
+	}
+
+	method boolean getballcaught(){
+		return ballcaught;
+	}
+
+	//methods
+
+	//ball dynamics
+	method void drawball(){
+		do Screen.setColor(true);
+		do Screen.drawCircle(bx, by, radius);
+		return;
+	}
+
+	method void eraseball(){
+		do Screen.setColor(false);
+		do Screen.drawCircle(bx, by, radius);
+		return;
+	}
+
+	method void moveballleft(){
+		if((bx-radius-lateral_move)>1){
+			do eraseball();
+			let bx=bx-lateral_move;
+			do drawball();
+		}
+		return;
+	}
+
+	method void moveballright(){
+		if((bx+radius+lateral_move)<510){
+			do eraseball();
+			let bx=bx+lateral_move;
+			do drawball();
+		}
+		return;
+	}
+
+	method void moveballdown(){
+		if( (by+radius)<(s3y-16) ){
+			do eraseball();
+			let by=by+down_move;
+			do drawball();
+		}
+		else{
+			if( ((s3x+39)<bx)&(bx<(s3x+55)) ){
+				do eraseball();
+				let bx=s3x+47;
+				let by=s3y-16;
+				do drawball();
+				do eraseball();
+				let by=by+4;
+				do Sys.wait(500);
+				do drawball();
+				let balltouched=true;
+				let ballcaught=true;
+			}
+			else{
+				do eraseball();
+				let bx=s3x+60;
+				let by=s3y-16;
+				do drawball();
+				do eraseball();
+				let by=by+4;
+				do Sys.wait(500);
+				do drawball();
+				let balltouched=true;
+				let ballcaught=false;
+			}
+		}
+		return;
+	}
+	
+	//s1 dynamics
+	method void draws1(){
+		do Screen.setColor(true);
+		do Screen.drawRectangle(s1x, s1y, s1x+23, s1y+47);
+		do Screen.drawRectangle(s1x, s1y+48, s1x+223, s1y+71);
+		do Screen.drawRectangle(s1x+200, s1y, s1x+223, s1y+47);
+		return;
+	}
+	
+	method void erases1(){
+		do Screen.setColor(false);
+		do Screen.drawRectangle(s1x, s1y, s1x+23, s1y+47);
+		do Screen.drawRectangle(s1x, s1y+48, s1x+223, s1y+71);
+		do Screen.drawRectangle(s1x+200, s1y, s1x+223, s1y+47);
+		return;
+	}
+	
+	method void moves1left(){
+		if((s1x-lateral_move)>1){
+			do erases1();
+			let s1x=s1x-lateral_move;
+			do draws1();
+		}
+		return;
+	}
+	
+	method void moves1right(){
+		if((s1x+223+lateral_move)<510){
+			do erases1();
+			let s1x=s1x+lateral_move;
+			do draws1();
+		}
+		return;
+	}
+	
+	method void moves1down(){
+		if( (s1y+71+down_move)<254){
+			do erases1();
+			let s1y=s1y+down_move;
+			do draws1();
+		}
+		else{
+			let s1touched=true;
+		}
+		return;
+	}
+	
+	//s2 dynamics
+	method void draws2(){
+		do Screen.setColor(true);
+		do Screen.drawRectangle(s2x, s2y, s2x+23, s2y+23);
+		do Screen.drawRectangle(s2x, s2y+24, s2x+159, s2y+47);
+		do Screen.drawRectangle(s2x+136, s2y, s2x+159, s2y+23);
+		return;
+	}
+	
+	method void erases2(){
+		do Screen.setColor(false);
+		do Screen.drawRectangle(s2x, s2y, s2x+23, s2y+23);
+		do Screen.drawRectangle(s2x, s2y+24, s2x+159, s2y+47);
+		do Screen.drawRectangle(s2x+136, s2y, s2x+159, s2y+23);
+		return;
+	}
+	
+	method void moves2left(){
+		if( ((s2y+47)<s1y) ){
+			if( ((s2y-lateral_move)>1) ){
+				do erases2();
+				let s2x=s2x-lateral_move;
+				do draws2();
+			}
+		}
+		else{
+			if( ((s2x+159)<s1x) ){
+				if( ((s2y-lateral_move)>1) ){
+					do erases2();
+					let s2x=s2x-lateral_move;
+					do draws2();
+				}
+			}
+			else{
+				if( ((s2x+159)<(s1x+200))&(s2x>(s1x+23)) ){
+					if( (s2x-lateral_move)>(s1x+23+2) ){
+						do erases2();
+						let s2x=s2x-lateral_move;
+						do draws2();
+					}
+				}
+				else{
+					if(s2x>(s1x+223)){
+						if( (s2x-lateral_move)>(s1x+223+2) ){
+							do erases2();
+							let s2x=s2x-lateral_move;
+							do draws2();
+						}
+					}
+				}
+			}
+		}
+		return;
+	}
+
+	method void moves2right(){
+		if( ((s2y+47)<s1y) ){
+			if(( (s2y+159+lateral_move)<510)){
+				do erases2();
+				let s2x=s2x+lateral_move;
+				do draws2();
+			}
+		}
+		else{
+			if( ((s2x+159)<s1x) ){
+				if( (s2x+159+lateral_move)<(s1x-2) ){
+					do erases2();
+					let s2x=s2x+lateral_move;
+					do draws2();
+				}
+			}
+			else{
+				if( ((s2x+159)<(s1x+200))&(s2x>(s1x+23)) ){
+					if( (s2x+159+lateral_move)<(s1x+200-2) ){
+						do erases2();
+						let s2x=s2x+lateral_move;
+						do draws2();
+					}
+				}
+				else{
+					if(s2x>(s1x+223)){
+						if( (s2x+159+lateral_move)<510){
+							do erases2();
+							let s2x=s2x+lateral_move;
+							do draws2();
+						}
+					}
+				}
+			}
+		}
+		return;
+	}
+
+	method void moves2down(){
+		if( ((s2x+159)<s1x)|(s2x>(s1x+223)) ){
+			if((s2y+47+down_move)<254){
+				do erases2();
+				let s2y = s2y+down_move;
+				do draws2();
+			}
+			else{let s2touched=true;}
+		}
+		else{
+			if( ((s2x+160)>s1x)&(s2x<(s1x+24)) ){		
+				if((s2y+47+down_move)<(s1y-2)){
+					do erases2();
+					let s2y=s2y+down_move;
+					do draws2();
+				}
+				else{let s2touched=true;}
+			}
+			else{
+				if( (s2x>(s1x+23))&((s2x+159)<(s1x+200)) ){
+					if((s2y+47+down_move)<(s1y+48-2)){
+						do erases2();
+						let s2y=s2y+down_move;
+						do draws2();
+					}
+					else{
+						let s2touched=true;
+						let s2fit=true;
+					}
+				}
+				else{
+					if( (s2x<(s1x+224))&((s2x+160)>(s1x+200)) ){
+						if((s2y+47+down_move)<(s1y-2)){
+							do erases2();
+							let s2y=s2y+down_move;
+							do draws2();
+						}
+						else{let s2touched=true;}
+					}
+				}
+			}
+		}
+		return;
+	}
+
+	//s3 dynamics
+	method void draws3(){
+		do Screen.setColor(true);
+		do Screen.drawRectangle(s3x, s3y, s3x+95, s3y+23);
+		do Screen.drawRectangle(s3x+45, s3y-8, s3x+50, s3y-1);
+		do Screen.drawCircle(s3x+47, s3y-16, 8);
+		do Screen.setColor(false);
+		do Screen.drawCircle(s3x+47, s3y-16, 6);
+		do Screen.drawRectangle(s3x+39, s3y-24, s3x+55, s3y-16);
+		return;
+	}
+
+	method void erases3(){
+		do Screen.setColor(false);
+		do Screen.drawRectangle(s3x, s3y, s3x+95, s3y+23);
+		do Screen.drawRectangle(s3x+45, s3y-8, s3x+50, s3y-1);
+		do Screen.drawCircle(s3x+47, s3y-16, 8);
+		return;
+	}
+
+	method void moves3down(){
+		if( ((s3x+95)<s1x)|(s3x>(s1x+223)) ){
+			if((s3y+23+down_move)<(254)){
+				do erases3();
+				let s3y=s3y+down_move;
+				do draws3();
+			}
+			else{let s3touched=true;}
+		}
+		else{
+			if( (s3x<(s2x+24))&((s3x+96)>s1x) ){
+				if((s3y+23+down_move)<(s2y-2)){
+					do erases3();
+					let s3y=s3y+down_move;
+					do draws3();
+				}
+				else{let s3touched=true;}
+			}
+			else{
+				if( (s3x>(s2x+23))&((s3x+95)<(s2x+136)) ){
+					if((s3y+23+down_move)<(s2y+24-2)){
+						do erases3();
+						let s3y=s3y+down_move;
+						do draws3();
+					}
+					else{
+						let s3touched=true;
+						let s3fit=true;
+					}
+				}
+				else{
+					if( (s3x<(s1x+224)) & ((s3x+160)>(s2x+200)) ){
+						if((s3y+23+down_move)<(s2y-2)){
+							do erases3();
+							let s3y=s3y+down_move;
+							do draws3();
+						}
+						else{let s3touched=true;}
+					}
+				}
+			}
+		}
+		return;
+	}
+
+	method void moves3left(){
+		if((s3y+23)<s2y){
+			if((s3x-lateral_move)>1){
+				do erases3();
+				let s3x=s3x-lateral_move;
+				do draws3();
+			}
+		}
+		else{
+			if((s3x+95)<s1x){
+				if((s3x-lateral_move)>1){
+					do erases3();
+					let s3x=s3x-lateral_move;
+					do draws3();
+				}
+			}
+			else{
+				if( ((s3x+159)<(s2x+200))&(s3x>(s2x+23)) ){
+					if((s3x-lateral_move)>(s2x+23+2)){
+						do erases3();
+						let s3x=s3x-lateral_move;
+						do draws3();
+					}
+				}
+				else{
+					if(s3x>(s1x+223)){
+						if((s3x-lateral_move)>(s1x+223+2)){
+							do erases3();
+							let s3x=s3x-lateral_move;
+							do draws3();
+						}
+					}
+				}
+			}
+		}
+		return;
+	}
+
+	method void moves3right(){
+		if((s3y+23)<s2y){
+			if((s3x+95+lateral_move)<510){
+				do erases3();
+				let s3x=s3x+lateral_move;
+				do draws3();
+			}
+		}
+		else{
+			if((s3x+95)<s1x){
+				if((s3x+95+lateral_move)<(s1x-2)){
+					do erases3();
+					let s3x=s3x+lateral_move;
+					do draws3();
+				}
+			}
+			else{
+				if( ((s3x+95)<(s2x+136))&(s3x>(s2x+23)) ){
+					if((s3x+95+lateral_move)<(s2x+136-2)){
+						do erases3();
+						let s3x=s3x+lateral_move;
+						do draws3();
+					}
+				}
+				else{
+					if(s3x>(s1x+223)){
+						if((s3x+95+lateral_move)<510){
+							do erases3();
+							let s3x=s3x+lateral_move;
+							do draws3();
+						}
+					}
+				}
+			}
+		}
+		return;
+	}
+}
