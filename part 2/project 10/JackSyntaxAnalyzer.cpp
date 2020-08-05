@@ -763,12 +763,14 @@ int main(int argc, char **argv){
 	string path,s;
 	path=argv[1];
 	s=path;
-	if(s.compare(s.length()-5, 5, ".jack")==0){
-		CompilationEngine c(s);
-		c.compileClass(0);
-		return 0;
+	if(s.length()>5){
+		if(s.compare(s.length()-5, 5, ".jack")==0){
+			CompilationEngine c(s);
+			c.compileClass(0);
+			return 0;
+		}
 	}
-	else{
+	//else{
 		DIR *d;
 		struct dirent *dir;
 		d=opendir(path.c_str());
@@ -787,10 +789,6 @@ int main(int argc, char **argv){
 				}
 			}
 		}
-	}
-	/*CompilationEngine c("Square.jack");
-	while(!t.eof()){
-		t.advance();
-	}*/
+	//}
 	return 0;
 }
