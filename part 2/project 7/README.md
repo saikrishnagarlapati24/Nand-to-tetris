@@ -6,4 +6,4 @@ The high-level language programs in Jack are first translated to an intermediary
 In the back-end, these VM language programs are translated to the assembly language of the computer(assembler translates these assembly programs into machine language).
 Projects 7 and 8 are about developing the back-end of our compiler, i.e., VM translator. 
 In project 7 we develop a parial VM translator which takes an input .vm file which has only push, pop and arithmetic commands of the VM language and translates them into assembly
-language commands
+language commands which are outputted through an .asm file.
