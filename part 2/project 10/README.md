@@ -8,3 +8,4 @@ rules of Jack language grammar.
 
 This stage of the front-end, JackAnalyzer, takes high-level jack programs as input and generates two output .xml files, one of which contains all the tokens one by one in the given 
 Jack program ignoring whitespaces and comments. The other .xml file contains the textual parse tree of the given Jack program, following the grammatical rules of the jack language.
+So we write a JackAnalyzer program in some high level language of our choice that does the job.
