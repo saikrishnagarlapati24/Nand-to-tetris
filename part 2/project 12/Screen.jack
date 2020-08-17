@@ -1,0 +1,219 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Screen.jack
+
+/**
+ * A library of functions for displaying graphics on the screen.
+ * The Hack physical screen consists of 512 rows (indexed 0..511, top to bottom)
+ * of 256 pixels each (indexed 0..255, left to right). The top left pixel on 
+ * the screen is indexed (0,0).
+ */
+class Screen {
+    static array screen, twoToThe;
+    static boolean color;
+    /** Initializes the Screen. */
+    function void init() {
+        let screen=16384;
+        let color=true;
+        let twoToThe = Array.new(16);
+        let twoToThe[0] = 1;
+        let twoToThe[1] = 2;
+        let twoToThe[2] = 4;
+        let twoToThe[3] = 8;
+        let twoToThe[4] = 16;
+        let twoToThe[5] = 32;
+        let twoToThe[6] = 64;
+        let twoToThe[7] = 128;
+        let twoToThe[8] = 256;
+        let twoToThe[9] = 512;
+        let twoToThe[10] = 1024;
+        let twoToThe[11] = 2048;
+        let twoToThe[12] = 4096;
+        let twoToThe[13] = 8192;
+        let twoToThe[14] = 16384;
+        let twoToThe[15] = -32767;
+        let twoToThe[15] = twoToThe[15] -1;
+        return;
+    }
+
+    /** Erases the entire screen. */
+    function void clearScreen() {
+        var int i;
+        let i=0;
+        while(i<8192){
+            let screen[i]=0;
+            let i=i+1;
+        }
+        return;
+    }
+
+    /** Sets the current color, to be used for all subsequent drawXXX commands.
+     *  Black is represented by true, white by false. */
+    function void setColor(boolean b) {
+        let color=b;
+        return;
+    }
+
+    /** Draws the (x,y) pixel, using the current color. */
+    function void drawPixel(int x, int y) {
+        var int address, value, modulo;
+        if( (y>-1) & (y<256) & (x>-1) & (x<512) ){
+            let address= 16384 + ((y*32) + (x/16));
+            let modulo = x - (16*(x/16));
+            let value=Memory.peek(address);
+            if(color){
+                let value = value | twoToThe[modulo];
+            }
+            else{
+                let value = value & (~twoToThe[modulo]);
+            }
+            do Memory.poke(address, value);
+        }
+        else{
+            do Sys.error(7);
+        }
+        return;
+    }
+
+    /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
+    function void drawLine(int x1, int y1, int x2, int y2) {
+        var int dx, dy, x, y, px, py, diff;
+        if((x1<0)|(x1>511)|(x2<0)|(x2>511)|(y1<0)|(y1>255)|(y2<0)|(y2>255)){
+            do Sys.error(8);
+            return;
+        }
+        if(x1=x2){
+            let y=Math.min(y1, y2);
+            if(y=y2){
+                let y2=y1;
+                let y1=y;
+            }
+            let dy=y2-y1;
+            let py=0;
+            while( py < (dy+1) ){
+                do Screen.drawPixel(x1, y1+py);
+                let py=py+1;
+            }
+            return;
+        }
+
+        if(y1=y2){//lines of length with one pixel will also be looked after by these two conditions.
+            let x=Math.min(x1, x2);
+            if(x=x2){
+                let x2=x1;
+                let x1=x;
+            }
+            let dx=x2-x1;
+            let px=0;
+            while(px < (dx+1)){
+                do Screen.drawPixel(x1+px ,y1);
+                let px=px+1;
+            }
+            return;
+        }
+
+        if(((x1<x2)&(y1<y2)) | ((x1>x2)&(y1>y2))){
+            if(x1>x2){
+                let x=x2;
+                let x2=x1;
+                let x1=x;
+
+                let y=y2;
+                let y2=y1;
+                let y1=y;
+            }
+            let dx=x2-x1;
+            let dy=y2-y1;
+            let px=0;
+            let py=0;
+            let diff=0;
+            while( (px<(dx+1)) | (py<(dy+1)) ){//totally dx+1 or dy+1 iterations including both ends
+                do Screen.drawPixel(x1+px, x2+px);
+                if( /*(py/px)<(dy/dx)*/ diff<0 ){//to move up(not in screen coordinates but in normal math coordinates)
+                    let py=py+1;
+                    let diff=diff+dx;
+                }
+                else{//right
+                    let px=px+1;
+                    let diff=diff-dy;
+                }
+            }
+            return;
+        }
+
+        else{//north-east or south-west(in screen coordinate system)
+            if(x2<x1){//preferring x2 to be higher always
+                let x=x2;
+                let x2=x1;
+                let x1=x;
+
+                let y=y2;
+                let y2=y1;
+                let y1=y;
+            }
+            let dx=x2-x1;//positive
+            let dy=y2-y1;//negative
+            let px=0;
+            let py=0;//this has to go in the negative direction and reach dy
+            let diff=0;
+            while( (px<(dx+1)) | (py>(dy-1)) ){
+                do Screen.drawPixel(x1+px, y1+py);
+                if( /*(py/px)<(dy/dx)*/ diff<0 ){//here py and dy are negative. See in diary for details. //to move right
+                    let px=px+1;
+                    let diff=diff-dy;//-dy is positive
+                }
+                else{//down
+                    let py=py-1;
+                    let diff=diff-dx;//-dx because py is decreasing. -dx is negative
+                }
+            }
+            return;
+        }
+    }
+
+    /** Draws a filled rectangle whose top left corner is (x1, y1)
+     * and bottom right corner is (x2,y2), using the current color. */
+    function void drawRectangle(int x1, int y1, int x2, int y2) {
+        var int dy, py, y, x;
+        if((x1<0)|(x1>511)|(x2<0)|(x2>511)|(y1<0)|(y1>255)|(y2<0)|(y2>255)){
+            do Sys.error(9);
+            return;
+        }
+        if(y2<y1){//making x2,y2 always to the bottom of x1,y1 on the screen
+            let y= y2;
+            let y2=y1;
+            let y1=y;
+            //No need to exchange x-coordinates which does not change anything but effectively the two points of the other diagonal are taken. 
+        }
+        let py=0;
+        let dy= y2-y1;
+        while(py<(dy+1)){
+            do Screen.drawLine(x1, y1+py, x2, y1+py);
+            let py=py+1;
+        }
+        return;
+    }
+
+    /** Draws a filled circle of radius r<=181 around (x,y), using the current color. */
+    function void drawCircle(int x, int y, int r) {
+        var int py;
+        if((x<0)|(x>511)|(y<0)|(y>255)){
+            do Sys.error(12);
+            return;
+        }
+        if((r<0)|(x+r>511)|(x-r<0)|(y+r>255)|(y-r<0)){
+            do Sys.error(13);
+            return;
+        }
+        else{
+            let py = -r;
+            while(py<(r+1)){
+                do Screen.drawLine( x-Math.sqrt( (r*r)-(py*py) ), y+py, x+Math.sqrt( (r*r)-(py*py) ), y+py );
+                let py=py+1;
+            }
+            return;
+        }
+    }
+
+}
