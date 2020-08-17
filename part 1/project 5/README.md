@@ -1,2 +1,1 @@
-In this project we finally put together all the parts of the computer that we have previously built and connect them to make the CPU, Memory of the computer and connect the Memory, 
-CPU and ROM chips to make a full-blown computer chip.
+In this project we finally put together all the parts of the computer that we have previously built and connect them to make the CPU, Memory of the computer. And connect the Memory, CPU and ROM chips to make a full-blown computer chip.
