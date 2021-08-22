@@ -1,4 +1,4 @@
-Part 1 is a collection of 6 individual projects which together bulid the Hardware layer of the computer whose name is HACK. First 5 projets themselves actually 
+Part 1 is a collection of 6 individual projects which together bulid the Hardware layer of the computer whose name is HACK. First 5 projects themselves actually 
 complete the building of the computer. 
 In project 4 we learn about the Machine language of the computer. The machine language of a computer is used to write programs in machine instructions where each instruction is a 
 16-bit binary word. These instructions are directly executed by the hack computer chip. Assembly language is nothing but mnemonic form of the raw machine language. 
